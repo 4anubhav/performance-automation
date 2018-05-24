@@ -14,23 +14,15 @@
       <com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup guiclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroupGui" testclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup" testname="Wynk users" enabled="true">
         <elementProp name="ThreadGroup.main_controller" elementType="com.blazemeter.jmeter.control.VirtualUserController"/>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <stringProp name="TargetLevel">10</stringProp>
-        <stringProp name="RampUp">10</stringProp>
+        <stringProp name="TargetLevel">${__P(users,11)}</stringProp>
+        <stringProp name="RampUp">${__P(rampuptime,11)}</stringProp>
         <stringProp name="Steps"></stringProp>
-        <stringProp name="Hold"></stringProp>
+        <stringProp name="Hold">${__P(holdrate,0)}</stringProp>
         <stringProp name="LogFilename"></stringProp>
         <stringProp name="Iterations"></stringProp>
         <stringProp name="Unit">S</stringProp>
-        <stringProp name="TestPlan.comments">${__P(users,0)},${__P(rampuptime,0)},${__P(holdrate,0)}</stringProp>
       </com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup>
       <hashTree>
-        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="BeanShell Sampler" enabled="true">
-          <stringProp name="BeanShellSampler.query">echo ${CONFIG_PATH}</stringProp>
-          <stringProp name="BeanShellSampler.filename"></stringProp>
-          <stringProp name="BeanShellSampler.parameters"></stringProp>
-          <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
-        </BeanShellSampler>
-        <hashTree/>
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Subscription" enabled="true">
           <stringProp name="delimiter">,</stringProp>
           <stringProp name="fileEncoding"></stringProp>
@@ -41,7 +33,6 @@
           <stringProp name="shareMode">shareMode.all</stringProp>
           <boolProp name="stopThread">false</boolProp>
           <stringProp name="variableNames">uid,msisdn,os,appversion,buildno,deviceid,imsi</stringProp>
-          <stringProp name="TestPlan.comments">${CONFIG_PATH}/testdata/wcf/data.csv</stringProp>
         </CSVDataSet>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="InitSubscription" enabled="true">
@@ -346,179 +337,6 @@ vars.put(&quot;atk&quot;,signature);</stringProp>
             </objProp>
             <stringProp name="filename"></stringProp>
           </ResultCollector>
-          <hashTree/>
-        </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="OfferProvision" enabled="false">
-          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&quot;clientIps&quot;:&quot;10.0.0.0&quot;,&quot;uid&quot;:&quot;${uid}&quot;,&quot;os&quot;:&quot;android&quot;,&quot;msisdn&quot;:&quot;${msisdn}&quot;,&quot;deviceId&quot;:&quot;${deviceid}&quot;}</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain">${ip}</stringProp>
-          <stringProp name="HTTPSampler.port">8080</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${offerprovision}</stringProp>
-          <stringProp name="HTTPSampler.method">POST</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-            <collectionProp name="HeaderManager.headers">
-              <elementProp name="x-bsy-date" elementType="Header">
-                <stringProp name="Header.name">x-bsy-date</stringProp>
-                <stringProp name="Header.value">${time}</stringProp>
-              </elementProp>
-              <elementProp name="x-bsy-atkn&#x9;3f3f489c2bb6eb16fb5df7b8508325ba" elementType="Header">
-                <stringProp name="Header.name">x-bsy-atkn</stringProp>
-                <stringProp name="Header.value">${atk}</stringProp>
-              </elementProp>
-              <elementProp name="" elementType="Header">
-                <stringProp name="Header.name">x-app-version</stringProp>
-                <stringProp name="Header.value">${appversion}</stringProp>
-              </elementProp>
-            </collectionProp>
-          </HeaderManager>
-          <hashTree/>
-          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
-            <stringProp name="scriptLanguage">java</stringProp>
-            <stringProp name="parameters"></stringProp>
-            <stringProp name="filename"></stringProp>
-            <stringProp name="cacheKey"></stringProp>
-            <stringProp name="script">import com.api.wcf.GenerateSignature;
-
-String requestBody = sampler.getArguments().getArgument(0).getValue();
-log.info(requestBody);
-
-//setting variable
-vars.put(&quot;time&quot;,GenerateSignature.getTimeStamp());
-
-//calling siganature fn
-String signature=GenerateSignature.generateHMACSignature(&quot;POST&quot;,vars.get(&quot;offerprovision&quot;),requestBody);
-//log.info(signature);
-vars.put(&quot;atk&quot;,signature);
-
-
-</stringProp>
-          </JSR223PreProcessor>
-          <hashTree/>
-        </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Idetification" enabled="false">
-          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&quot;appVersion&quot;:&quot;${appversion}&quot;,&quot;imsi&quot;:&quot;${imsi}&quot;}</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain">${ip}</stringProp>
-          <stringProp name="HTTPSampler.port">8080</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${identification}</stringProp>
-          <stringProp name="HTTPSampler.method">POST</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-            <collectionProp name="HeaderManager.headers">
-              <elementProp name="x-bsy-date" elementType="Header">
-                <stringProp name="Header.name">x-bsy-date</stringProp>
-                <stringProp name="Header.value">${time}</stringProp>
-              </elementProp>
-              <elementProp name="x-bsy-atkn&#x9;3f3f489c2bb6eb16fb5df7b8508325ba" elementType="Header">
-                <stringProp name="Header.name">x-bsy-atkn</stringProp>
-                <stringProp name="Header.value">${atk}</stringProp>
-              </elementProp>
-            </collectionProp>
-          </HeaderManager>
-          <hashTree/>
-          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
-            <stringProp name="scriptLanguage">java</stringProp>
-            <stringProp name="parameters"></stringProp>
-            <stringProp name="filename"></stringProp>
-            <stringProp name="cacheKey"></stringProp>
-            <stringProp name="script">import com.api.wcf.GenerateSignature;
-
-String requestBody = sampler.getArguments().getArgument(0).getValue();
-log.info(requestBody);
-
-//setting variable
-vars.put(&quot;time&quot;,GenerateSignature.getTimeStamp());
-
-//calling siganature fn
-String signature=GenerateSignature.generateHMACSignature(&quot;POST&quot;,vars.get(&quot;identification&quot;),requestBody);
-//setting atk variable
-vars.put(&quot;atk&quot;,signature);</stringProp>
-          </JSR223PreProcessor>
-          <hashTree/>
-        </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Eligiblepacks" enabled="false">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain">${ip}</stringProp>
-          <stringProp name="HTTPSampler.port">8080</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${eligiblepacks}${msisdn}</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          <stringProp name="TestPlan.comments">9560011966</stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-            <collectionProp name="HeaderManager.headers">
-              <elementProp name="x-bsy-date" elementType="Header">
-                <stringProp name="Header.name">x-bsy-date</stringProp>
-                <stringProp name="Header.value">${time}</stringProp>
-              </elementProp>
-              <elementProp name="x-bsy-atkn&#x9;3f3f489c2bb6eb16fb5df7b8508325ba" elementType="Header">
-                <stringProp name="Header.name">x-bsy-atkn</stringProp>
-                <stringProp name="Header.value">${rrrr}</stringProp>
-              </elementProp>
-            </collectionProp>
-          </HeaderManager>
-          <hashTree/>
-          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
-            <stringProp name="scriptLanguage">java</stringProp>
-            <stringProp name="parameters"></stringProp>
-            <stringProp name="filename"></stringProp>
-            <stringProp name="cacheKey"></stringProp>
-            <stringProp name="script">import com.api.wcf.GenerateSignature;
-//setting variable
-vars.put(&quot;time&quot;,GenerateSignature.getTimeStamp());
-//calling siganature fn
-String signature=GenerateSignature.generateHMACSignature(&quot;GET&quot;,vars.get(&quot;eligiblepacks&quot;)+vars.get(&quot;msisdn&quot;));
-//setting atk variable
-vars.put(&quot;rrrr&quot;,signature);</stringProp>
-          </JSR223PreProcessor>
           <hashTree/>
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="OfferProvision" enabled="true">
